@@ -1,5 +1,8 @@
 #include "EventLoop.h"
 
+#include "Poller.h"
+#include "Channel.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -9,19 +12,20 @@
 using namespace net;
 
 __thread EventLoop* t_loopInThisThread = 0;
+const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop() : 
     looping_(false), 
-    threadId_(gettid()) 
+    quit_(false),
+    threadId_(gettid()),
+    poller_(new Poller(this)) 
 {
     printf("creat new EventLoop %p threadId %d\n", this, threadId_);
-    if (t_loopInThisThread)
-    {
+    if (t_loopInThisThread) {
         printf("another EventLoop %p exisit in this thread %d", t_loopInThisThread, threadId_);
         abort();
     }
-    else
-    {
+    else {
         t_loopInThisThread = this;
     }
 
@@ -39,12 +43,29 @@ void EventLoop::loop() {
     assert(!looping_);
     assertInLoopThread();
     looping_ = true;
-    printf("threadId %d is looping\n", threadId_);
-    ::poll(NULL, 0, 5 * 1000);
+    quit_ = false;
 
-    looping_ = false;
-    printf("threadId %d exit loop\n", threadId_);
+    while (!quit_) {
+        activeChannels_.clear();
+        poller_->poll(kPollTimeMs, &activeChannels_);
+        for (ChannelList::iterator it = activeChannels_.begin(); it != activeChannels_.end(); ++it) {
+            (*it)->headleEvent();
+        }
+    }
+
+    printf("EventLoop %p stop looping\n", this);
     
+}
+
+void EventLoop::quit() 
+{
+    quit_ = true;
+}
+
+void EventLoop::updateChannel(Channel* channel) {
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    poller_->updateChannel(channel);
 }
 
 void EventLoop::abortNotInLoopThread()
