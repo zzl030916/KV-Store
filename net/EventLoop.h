@@ -1,6 +1,9 @@
 #ifndef NET_EVENTLOOP_H
 #define NET_EVENTLOOP_H
 
+#include "Timestamp.h"
+#include "Timer.h"
+
 #include <unistd.h>
 #include <memory>
 #include <vector>
@@ -10,6 +13,7 @@ namespace net
 
 class Channel;
 class Poller;
+class TimerQueue;
 
 class EventLoop 
 {
@@ -20,6 +24,13 @@ class EventLoop
         void loop();
 
         void quit();
+
+        Timestamp pollReturnTime() const { return pollReturnTime_; }
+
+        Timer* runAt(const Timestamp& time, const TimerCallback& cb);
+        Timer* runAfter(double delay, const TimerCallback& cb);
+        Timer* runEvery(double interval, const TimerCallback& cb);
+
 
         void updateChannel(Channel* channel);
 
@@ -41,7 +52,9 @@ class EventLoop
         bool quit_;
         const pid_t threadId_;
 
+        Timestamp pollReturnTime_;
         std::unique_ptr<Poller> poller_;
+        std::unique_ptr<TimerQueue> timerQueue_;
         ChannelList activeChannels_;
 };
 

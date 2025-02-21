@@ -6,8 +6,7 @@
 #include <stdint.h>
 
 #include "EventLoop.h"
-
-using TimeStamp = int64_t;
+#include "Timestamp.h"
 
 struct pollfd;
 
@@ -25,7 +24,7 @@ class Poller
         Poller(EventLoop* loop);
         ~Poller();
 
-        TimeStamp poll(int timeoutMs, ChannelList* activeChannels);
+        Timestamp poll(int timeoutMs, ChannelList* activeChannels);
 
         void updateChannel(Channel* channel);
 

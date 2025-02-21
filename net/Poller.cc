@@ -18,12 +18,10 @@ Poller::~Poller()
 {
 }
 
-TimeStamp Poller::poll(int timeoutMs, ChannelList* activeChannels)
+Timestamp Poller::poll(int timeoutMs, ChannelList* activeChannels)
 {
     int numEvents = ::poll(pollfds_.data(), pollfds_.size(), timeoutMs);
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    TimeStamp now = tv.tv_sec * 1000000L + tv.tv_usec;
+    Timestamp now = Timestamp::now();
     if (numEvents > 0) {
         printf("%d events happended\n", numEvents);
         fillActiveChannels(numEvents, activeChannels);

@@ -2,6 +2,7 @@
 
 #include "Poller.h"
 #include "Channel.h"
+#include "TimerQueue.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +19,8 @@ EventLoop::EventLoop() :
     looping_(false), 
     quit_(false),
     threadId_(gettid()),
-    poller_(new Poller(this)) 
+    poller_(new Poller(this)),
+    timerQueue_(new TimerQueue(this))
 {
     printf("creat new EventLoop %p threadId %d\n", this, threadId_);
     if (t_loopInThisThread) {
@@ -54,12 +56,29 @@ void EventLoop::loop() {
     }
 
     printf("EventLoop %p stop looping\n", this);
-    
+    looping_ = false;
 }
 
 void EventLoop::quit() 
 {
     quit_ = true;
+}
+
+Timer* EventLoop::runAt(const Timestamp& time, const TimerCallback& cb)
+{
+  return timerQueue_->addTimer(cb, time, 0.0);
+}
+
+Timer* EventLoop::runAfter(double delay, const TimerCallback& cb)
+{
+  Timestamp time(addTime(Timestamp::now(), delay));
+  return runAt(time, cb);
+}
+
+Timer* EventLoop::runEvery(double interval, const TimerCallback& cb)
+{
+  Timestamp time(addTime(Timestamp::now(), interval));
+  return timerQueue_->addTimer(cb, time, interval);
 }
 
 void EventLoop::updateChannel(Channel* channel) {
