@@ -50,7 +50,7 @@ void Poller::fillActiveChannels(int numEvents, ChannelList* activeChannels) cons
 
 void Poller::updateChannel(Channel* channel) {
     assertInLoopThread();
-    printf("fd = %d event = %d", channel->fd(), channel->events());
+    printf("fd = %d event = %d\n", channel->fd(), channel->events());
     if (channel->index() < 0) {
         assert(channels_.find(channel->fd()) == channels_.end());
         struct pollfd pfd;

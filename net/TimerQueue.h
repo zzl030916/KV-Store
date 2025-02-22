@@ -28,6 +28,8 @@ class TimerQueue
         using Entry = std::pair<Timestamp, Timer*>;
         using TimerList = std::set<Entry>;
 
+        void addTimerInLoop(Timer* timer);
+
         void handleRead();
 
         std::vector<Entry> getExpired(Timestamp now);
