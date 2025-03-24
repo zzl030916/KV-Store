@@ -39,6 +39,7 @@ class EventLoop
 
         void wakeup();
         void updateChannel(Channel* channel);
+        void removeChannel(Channel* channel);
 
         void assertInLoopThread() 
         {
@@ -70,6 +71,14 @@ class EventLoop
         std::mutex mutex_;
         std::vector<Functor> pendingFunctors_;
 };
+
+inline EventLoop* CheckNotNull(EventLoop* loop) 
+{
+    if (loop == NULL) {
+        abort();
+    }
+    return loop;
+}
 
 }
 

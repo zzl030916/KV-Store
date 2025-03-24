@@ -10,6 +10,7 @@ class Timestamp
         Timestamp(int64_t microseconds);
 
         std::string toString() const;
+        std::string toFormattedString() const;
 
         bool valid() const { return microSecondsSinceEpoch_ > 0; }
 
