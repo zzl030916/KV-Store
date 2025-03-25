@@ -28,7 +28,7 @@ void EventLoopThreadPool::start()
 
     started_ = true;
 
-    printf("EventLoopThreadPool::numThread::%d\n", numThreads_);
+    // printf("EventLoopThreadPool::numThread::%d\n", numThreads_);
     for (int i = 0; i < numThreads_; ++i)
     {
         threads_.push_back(std::make_unique<EventLoopThread>());
@@ -41,7 +41,7 @@ EventLoop* EventLoopThreadPool::getNextLoop()
     baseLoop_->assertInLoopThread();
     EventLoop* loop = baseLoop_;
 
-    printf("EventLoopThreadPool::PoolSize::%d\n", (int)loops_.size());
+    // printf("EventLoopThreadPool::PoolSize::%d\n", (int)loops_.size());
     if (!loops_.empty())
     {
         // round-robin

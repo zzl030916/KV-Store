@@ -2,6 +2,8 @@
 
 using namespace net;
 
+std::atomic<int64_t> Timer::s_numCreated_;
+
 void Timer::restart(Timestamp now)
 {
     if (repeat_)

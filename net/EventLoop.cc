@@ -22,7 +22,7 @@ static int createEventfd()
   int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
   if (evtfd < 0)
   {
-    printf("Failed in eventfd\n");
+    // printf("Failed in eventfd\n");
     abort();
   }
   return evtfd;
@@ -38,9 +38,9 @@ EventLoop::EventLoop() :
     wakeupFd_(createEventfd()),
     wakeupChannel_(new Channel(this, wakeupFd_))
 {
-    printf("creat new EventLoop %p threadId %d\n", this, threadId_);
+    // printf("creat new EventLoop %p threadId %d\n", this, threadId_);
     if (t_loopInThisThread) {
-        printf("another EventLoop %p exisit in this thread %d", t_loopInThisThread, threadId_);
+        // printf("another EventLoop %p exisit in this thread %d", t_loopInThisThread, threadId_);
         abort();
     }
     else {
@@ -58,7 +58,7 @@ EventLoop::~EventLoop()
     assert(!looping_);
     ::close(wakeupFd_);
     t_loopInThisThread = NULL;
-    printf("threadId %d stop\n", threadId_);
+    // printf("threadId %d stop\n", threadId_);
 }
 
 void EventLoop::loop() {
@@ -76,7 +76,7 @@ void EventLoop::loop() {
         doPendingFunctors();
     }
 
-    printf("EventLoop %p stop looping\n", this);
+    // printf("EventLoop %p stop looping\n", this);
     looping_ = false;
 }
 
@@ -115,21 +115,26 @@ void EventLoop::queueInLoop(const Functor& cb)
 }
 
 
-Timer* EventLoop::runAt(const Timestamp& time, const TimerCallback& cb)
+TimerId EventLoop::runAt(const Timestamp& time, const TimerCallback& cb)
 {
-  return timerQueue_->addTimer(cb, time, 0.0);
+    return timerQueue_->addTimer(cb, time, 0.0);
 }
 
-Timer* EventLoop::runAfter(double delay, const TimerCallback& cb)
+TimerId EventLoop::runAfter(double delay, const TimerCallback& cb)
 {
-  Timestamp time(addTime(Timestamp::now(), delay));
-  return runAt(time, cb);
+    Timestamp time(addTime(Timestamp::now(), delay));
+    return runAt(time, cb);
 }
 
-Timer* EventLoop::runEvery(double interval, const TimerCallback& cb)
+TimerId EventLoop::runEvery(double interval, const TimerCallback& cb)
 {
-  Timestamp time(addTime(Timestamp::now(), interval));
-  return timerQueue_->addTimer(cb, time, interval);
+    Timestamp time(addTime(Timestamp::now(), interval));
+    return timerQueue_->addTimer(cb, time, interval);
+}
+
+void EventLoop::cancel(TimerId timerId)
+{
+    return timerQueue_->cancel(timerId);
 }
 
 void EventLoop::updateChannel(Channel* channel) {
@@ -146,7 +151,7 @@ void EventLoop::removeChannel(Channel* channel) {
 
 void EventLoop::abortNotInLoopThread()
 {
-    printf("EventLoop was created in threadId %d, current in threadId %d\n", threadId_, gettid());
+    // printf("EventLoop was created in threadId %d, current in threadId %d\n", threadId_, gettid());
     abort();
 }
 
@@ -156,7 +161,7 @@ void EventLoop::wakeup()
     ssize_t n = ::write(wakeupFd_, &one, sizeof one);
     if (n != sizeof one)
     {
-        printf("EventLoop::wakeup() writes %ln bytes instead of 8", &n);
+        // printf("EventLoop::wakeup() writes %ln bytes instead of 8", &n);
     }
 }
 
@@ -166,7 +171,7 @@ void EventLoop::handleRead()
     ssize_t n = ::read(wakeupFd_, &one, sizeof one);
     if (n != sizeof one)
     {
-        printf("EventLoop::handleRead() reads %ln bytes instead of 8", &n);
+        // printf("EventLoop::handleRead() reads %ln bytes instead of 8", &n);
     }
 }
 

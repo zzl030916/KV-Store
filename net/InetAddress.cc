@@ -37,18 +37,19 @@ InetAddress::InetAddress(const std::string& ip, uint16_t port)
     addr_.sin_port = htons(port);
     if (::inet_pton(AF_INET, ip.c_str(), &addr_.sin_addr) <= 0) 
     {
+        printf("%s\n", ip.c_str());
         abort();
     }
 }
 
 std::string InetAddress::toHostPort() const
 {
-  char buf[32];
-  char host[INET_ADDRSTRLEN] = "INVALID";
-  ::inet_ntop(AF_INET, &addr_.sin_addr, host, sizeof host);
-  uint16_t port = ntohs(addr_.sin_port);
-  snprintf(buf, sizeof buf, "%s:%u", host, port);
-  return buf;
+    char buf[32];
+    char host[INET_ADDRSTRLEN] = "INVALID";
+    ::inet_ntop(AF_INET, &addr_.sin_addr, host, sizeof host);
+    uint16_t port = ntohs(addr_.sin_port);
+    snprintf(buf, sizeof buf, "%s:%u", host, port);
+    return buf;
 }
 
 

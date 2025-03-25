@@ -37,7 +37,7 @@ void Channel::headleEvent(Timestamp receiveTime)
 {
     eventHandling_ = true;
     if (revents_ & POLLNVAL) {
-        printf("WARN Channel::headleEvent() POLLNVAL\n");
+        // printf("WARN Channel::headleEvent() POLLNVAL\n");
     }
 
     if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {

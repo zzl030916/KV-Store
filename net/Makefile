@@ -1,5 +1,5 @@
-LIB_SRC = EventLoop.cc Channel.cc Poller.cc Timestamp.cc Timer.cc TimerQueue.cc EventLoopThread.cc Acceptor.cc Socket.cc InetAddress.cc TcpServer.cc TcpConnection.cc Buffer.cc EventLoopThreadPool.cc
-BINARIES = test1 test2 test3 test4 test5 test6 test7 test8 test9
+LIB_SRC = EventLoop.cc Channel.cc Poller.cc Timestamp.cc Timer.cc TimerQueue.cc EventLoopThread.cc Acceptor.cc Socket.cc InetAddress.cc TcpServer.cc TcpConnection.cc Buffer.cc EventLoopThreadPool.cc Connector.cc TcpClient.cc
+BINARIES = test1 test2 test3 test4 test5 test6 test7 test8 test9 test12 test13
 
 all : $(BINARIES)
 
@@ -14,7 +14,10 @@ test5 : test5.cc
 test6 : test6.cc
 test7 : test7.cc
 test8 : test8.cc
-test9 : test9.cc
+test9 : test9.cc 
+
+test12 : test12.cc
+test13 : test13.cc
 
 .PHONY : clean
 clean:

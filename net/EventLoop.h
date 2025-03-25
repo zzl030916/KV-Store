@@ -3,6 +3,7 @@
 
 #include "Timestamp.h"
 #include "Timer.h"
+#include "TimerId.h"
 
 #include <unistd.h>
 #include <memory>
@@ -33,9 +34,11 @@ class EventLoop
         void runInLoop(const Functor& cb);
         void queueInLoop(const Functor& cb);
 
-        Timer* runAt(const Timestamp& time, const TimerCallback& cb);
-        Timer* runAfter(double delay, const TimerCallback& cb);
-        Timer* runEvery(double interval, const TimerCallback& cb);
+        TimerId runAt(const Timestamp& time, const TimerCallback& cb);
+        TimerId runAfter(double delay, const TimerCallback& cb);
+        TimerId runEvery(double interval, const TimerCallback& cb);
+
+        void cancel(TimerId timerId);
 
         void wakeup();
         void updateChannel(Channel* channel);
