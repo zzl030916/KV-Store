@@ -41,6 +41,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection>
         void send(const std::string& message);
 
         void shutdown();
+        void setTcpNoDelay(bool on);
 
         void setConnectionCallback(const ConnectionCallback& cb)
         { connectionCallback_ = cb; }

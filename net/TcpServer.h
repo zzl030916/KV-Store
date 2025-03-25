@@ -10,6 +10,7 @@ namespace net
 
 class Acceptor;
 class EventLoop;
+class EventLoopThreadPool;
 
 class TcpServer
 {
@@ -34,16 +35,21 @@ class TcpServer
     void setMessageCallback(const MessageCallback& cb)
     { messageCallback_ = cb; }
 
+
+    void setThreadNum(int numThreads);
+
     private:
         /// Not thread safe, but in loop
         void newConnection(int sockfd, const InetAddress& peerAddr);
         void removeConnection(const TcpConnectionPtr& conn);
+        void removeConnectionInLoop(const TcpConnectionPtr& conn);
 
         typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;
 
         EventLoop* loop_;  // the acceptor loop
         const std::string name_;
         std::unique_ptr<Acceptor> acceptor_; // avoid revealing Acceptor
+        std::unique_ptr<EventLoopThreadPool> threadPool_;
         ConnectionCallback connectionCallback_;
         MessageCallback messageCallback_;
         bool started_;

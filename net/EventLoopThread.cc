@@ -9,6 +9,7 @@ EventLoopThread::EventLoopThread():
     exiting_(false),
     thread_(std::bind(&EventLoopThread::threadFunc, this))
 {
+    printf("EventLoopThread::tid::%d\n", gettid());
 }
 
 EventLoopThread::~EventLoopThread()
